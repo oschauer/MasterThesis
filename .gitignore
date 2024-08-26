@@ -146,7 +146,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.mes 
+.mes
 mes/
 
 # Spyder project settings
