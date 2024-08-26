@@ -1,0 +1,13 @@
+services:
+  erp:
+    build:
+      context: .
+    ports:
+      - 5001:5001
+      - 8081:8081
+    networks:
+      - kafka-net
+
+networks:
+  kafka-net:
+    external: true
