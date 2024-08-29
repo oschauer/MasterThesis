@@ -1,8 +1,7 @@
 """Class containing all required functions for the "fieldlevelinterface" container
 """
 
-from confluent_kafka import Producer, Consumer, TopicPartition, IsolationLevel
-from confluent_kafka.admin import AdminClient, OffsetSpec
+from confluent_kafka import Producer, Consumer, TopicPartition
 import json
 from threading import Thread
 import time

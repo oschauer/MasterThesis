@@ -234,10 +234,12 @@ def production_planner(producer):
 
 if __name__ == "__main__":
 
+    # Initialize Kafka obejcts
     order_consumer = Consumer(config)
     completed_order_consumer = Consumer(config)
     producer = Producer(config)
 
+    # Bind threads
     orders_thread = threading.Thread(
         target=order_update_thread,
         daemon=True,
@@ -252,8 +254,10 @@ if __name__ == "__main__":
     logging.info(
         "[Initialization] - Starting setup thread. Waiting for it's termination"
     )
+    # start setup thread
     setup_thread.start()
     setup_thread.join()
+    # start worker threads
     logging.info("[Initialization] - Setup thread done. Starting worker threads")
     orders_thread.start()
     production_thread.start()

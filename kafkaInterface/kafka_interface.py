@@ -1,3 +1,6 @@
+"""Provides an interface for external apps to interact with the cluster
+"""
+
 from flask import Flask, request, jsonify
 import json
 from confluent_kafka import Producer, Consumer
@@ -19,6 +22,11 @@ oven_status = {
 
 @app.route("/orders", methods=["POST"])
 def accept_order():
+    """Provides an endpoint "/orders" to submit orders.
+
+    Returns:
+        Response: Response containing code 200 for success
+    """
     order = json.loads(request.data)
     producer = Producer(config)
     logging.info("[Interface] - Order received via POST request")
@@ -34,16 +42,31 @@ def accept_order():
 
 @app.route("/oven_status", methods=["GET"])
 def oven_status_request():
+    """Provides an endpoint "/oven_status" to request the oven_status.
+
+    Returns:
+        bytes: Oven status serialized and encoded
+    """
     logging.info("Sending following GET repsonse: %s", get_oven_status())
     return json.dumps(get_oven_status()).encode("utf-8")
 
 
 def get_oven_status():
+    """Getter method for the global variable oven_status
+
+    Returns:
+        dict: Oven Status as a dict
+    """
     global oven_status
     return oven_status
 
 
 def machine_update(subscriber):
+    """Thread to continously update the oven_status variable after consuming events from the Kafka cluster
+
+    Args:
+        subscriber (Consumer): The consumer used to access the cluster
+    """
     global oven_status
     subscriber.subscribe(["machines_status"])
     loop1 = 0

@@ -1,8 +1,11 @@
+"""Offers an UI to submit orders to the ERP. Includes methods for generating and sending orders.
+
+"""
+
 import random
 import time
 import requests
 import logging
-import json
 from nicegui import ui
 
 logging.basicConfig(level=logging.DEBUG)
@@ -19,6 +22,11 @@ custom_items_str = ""
 
 
 def generate_random_order():
+    """Generates a randomized order.
+
+    Returns:
+        dict: Order ready to be submitted to the cluster
+    """
     item_id = 0
     order_items = {}
     for _ in range(random.randint(1, 4)):
@@ -33,6 +41,15 @@ def generate_random_order():
 
 
 def generate_custom_order(prio, items: list[dict]):
+    """Generates a custom order with given parameters.
+
+    Args:
+        prio (int): The priority of the order to be generated
+        items (list[dict]): List of order items
+
+    Returns:
+        dict: Order ready to be submitted to the cluster
+    """
     item_id = 0
     order_items = {}
     for item in items:
@@ -48,10 +65,27 @@ def generate_custom_order(prio, items: list[dict]):
 
 
 def generate_custom_order_item(item_id, item):
+    """Generates a valid order_item entry
+
+    Args:
+        item_id (int): Key for the dict entry
+        item (dict): Value for the dict entry
+
+    Returns:
+        dict: A valid entry for the "order_items" dict of an order
+    """
     return {item_id: item}
 
 
 def generate_random_order_item(item_id):
+    """Generates an order item for a randomly generated order.
+
+    Args:
+        item_id (int): ID of the order item
+
+    Returns:
+        dict: Entry for the order_items of a randomly generated order
+    """
     product = random.choice(products)
     temp = random.randint(1, 5) * 100
     duration = random.randint(5, 15)
@@ -60,6 +94,7 @@ def generate_random_order_item(item_id):
 
 
 def ui_random_button_trigger():
+    """Onclick method for the "random order" button"""
     url = "http://172.18.0.5:5000/orders"
     order = generate_random_order()
     global last_submitted_order
@@ -71,7 +106,11 @@ def ui_random_button_trigger():
 
 
 def ui_custom_button_trigger(prio):
+    """Onclick method for the "submit order" button
 
+    Args:
+        prio (int): Priority of the assembled order
+    """
     global custom_items
     url = "http://172.18.0.5:5000/orders"
     order = generate_custom_order(prio, custom_items)
@@ -85,6 +124,7 @@ def ui_custom_button_trigger(prio):
 
 
 def ui_refresh_trigger():
+    """Onclick method for the "refresh" button for the oven status"""
     global oven_status
     url = "http://172.18.0.5:5000/oven_status"
     r = requests.get(url)
@@ -95,6 +135,7 @@ def ui_refresh_trigger():
 
 
 def user_interface():
+    """Constructs the UI of the ERP"""
     global last_response_code
     global last_submitted_order
     global custom_items
@@ -179,6 +220,11 @@ def user_interface():
 
 
 def set_custom_items_str(s):
+    """Setter methods for the custom items string variable
+
+    Args:
+        s (str): Value the string to be set to
+    """
     global custom_items_str
     custom_items_str = str(s)
     if not custom_items_str:
@@ -186,6 +232,7 @@ def set_custom_items_str(s):
 
 
 def clear_custom_items():
+    """Clears the custom items variable (list)"""
     global custom_items
     custom_items.clear()
     set_custom_items_str("")
